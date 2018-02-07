@@ -1,9 +1,20 @@
+import re
+from django.forms import ValidationError
 from django.db import models
+
+
+def lnglat_validator(value):
+    if not re.match(r'^([+-]?\d+\.?\d*),([+-]?\d+\.?\d*)$', value):
+        raise ValidationError('Invalid LngLat Type')
+        #숫자,숫자 형식의 폼으로만 작성가능
 
 class Rest(models.Model):
 	name = models.CharField(max_length=100, verbose_name='식당 이름')
 	addr = models.TextField(blank=True, verbose_name='주소')
-
+	lnglat = models.CharField(max_length=50, blank=True,
+	        validators=[lnglat_validator],
+	        help_text='경도/위도 포맷으로 입력',
+	        verbose_name='지도 경도,위도')
 	def __str__(self):
 		return self.name
 

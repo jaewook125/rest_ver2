@@ -3,34 +3,9 @@
 {% block content %}
       <main role="main" class="inner cover">
         <h1 class="cover-heading">중앙화면 1</h1>
-        <p class="lead">중앙화면</p>
-        <p class="lead">
-          <a href="#" class="btn btn-lg btn-secondary">Learn more</a>
-        </p>
-<script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId={{ naver_client_id }}"></script>
-
-<style>
-#naver_map_point_{{ id }} {
-    width: {{ width }};
-    height: {{ height }};
-}
-</style>
-<div id="naver_map_point_{{ id }}"></div>
-<script>
-(function() {
-    var base_point = new naver.maps.LatLng({{ base_lat }}, {{ base_lng }});
-    var map = new naver.maps.Map(document.getElementById('naver_map_point_{{ id }}'), {
-        center: base_point
-    });
-    var marker = new naver.maps.Marker({
-        position: base_point,
-        map: map
-    });
-    naver.maps.Event.addListener(map, 'click', function(e) {
-        marker.setPosition(e.coord);
-        document.getElementById('{{ id }}').value = e.coord.lng() + ',' + e.coord.lat();
-    });
-})();
-</script>
+        <p>{{rest}}</p>
+        <div style="text-align: center;">
+            <p class="lead">{{ form }}</p>
+        </div>
       </main>
 {% endblock %}

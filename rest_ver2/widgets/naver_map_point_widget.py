@@ -3,28 +3,23 @@ from django import forms
 from django.conf import settings
 from django.template.loader import render_to_string
 
-
 class NaverMapPointWidget(forms.TextInput):
-    def render(self, name, value, attrs=None):
-        if not attrs: attrs = {}
-        attrs['readonly'] = 'readonly'
+    BASE_LAT, BASE_LNG = '37.497921', '127.027636' # 강남역
 
+    def render(self, name, value, attrs):
         width = str(self.attrs.get('width', 800))
         height = str(self.attrs.get('height', 600))
-        if width.isdigit():
-            width += 'px'
-        if height.isdigit():
-            height += 'px'
+        if width.isdigit(): width += 'px'
+        if height.isdigit(): height += 'px'
 
-        context = dict(attrs, **self.attrs)
-
-        # default point : 강남역
-        context['base_lat'] = '37.497921'
-        context['base_lng'] = '127.027636'
-
-        context['naver_client_id'] = settings.NAVER_CLIENT_ID
-        context['width'] = width
-        context['height'] = height
+        context = {
+            'naver_client_id': settings.NAVER_CLIENT_ID,
+            'id': attrs['id'],
+            'width': width,
+            'height': height,
+            'base_lat': self.BASE_LAT,
+            'base_lng': self.BASE_LNG,
+        }
 
         if value:
             try:
@@ -35,6 +30,6 @@ class NaverMapPointWidget(forms.TextInput):
                 pass
 
         rendered = super(NaverMapPointWidget, self).render(name, value, attrs)
-        html = render_to_string('naver_map_point_widget.html', context)
+        html = render_to_string('widgets/naver_map_point_widget.html', context)
 
         return rendered + html
