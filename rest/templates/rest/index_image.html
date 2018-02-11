@@ -3,9 +3,9 @@
 {% block content %}
       <main role="main" class="inner cover">
         <h1 class="cover-heading">{{rest.name}}</h1>
-
         {% if rest_image %}
           <img src="{{rest_image.image.url}}" alt="">
+          {{rest_image.image}}
         {% else %}
             <center>이미지가 없네요! 업로드 해주세요!</center>
         {% endif %}

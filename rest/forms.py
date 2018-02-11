@@ -1,11 +1,12 @@
 from django import forms
 from .models import Rest
-from django.core.validators import RegexValidator
 from rest_ver2.widgets.naver_map_point_widget import NaverMapPointWidget
 
-class PostForm(forms.Form):
-    point = forms.CharField(validators=[RegexValidator(r'^[+-]?[\d\.]+,[+-]?[\d\.]+$')], widget=NaverMapPointWidget)
+class RestForm(forms.ModelForm):
 
-    class meta:
-    	model = Rest
-    	field = '__all__'
+	class Meta:
+		model = Rest
+		field = '__all__'
+		widgets = {
+			'lnglat': NaverMapPointWidget(attrs={'width': 600, 'height': 300}),
+		}
