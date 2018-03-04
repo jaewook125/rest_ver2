@@ -17,43 +17,48 @@
       </main>
 
 <script>
-var map = new naver.maps.Map('map', {
-    center: new naver.maps.LatLng(37.5666805, 126.9784147),
-    zoom: 5,
-    mapTypeId: naver.maps.MapTypeId.NORMAL
+var map = new naver.maps.Map('map', { 
+  //map 오브젝트 생성, naver.maps.Map기반으로
+    center: new naver.maps.LatLng(37.5666805, 126.9784147), //기본 좌표(서울시청)
+    zoom: 5,//줌 5
+    mapTypeId: naver.maps.MapTypeId.NORMAL //기본 네이버 맵 타입
 });
 
-var infowindow = new naver.maps.InfoWindow();
+var infowindow = new naver.maps.InfoWindow(); 
+    //infowindow오브젝트 생성 InfoWindow메서드는 지도위에 올라가는 정보창
 
-function onSuccessGeolocation(position) {
+function onSuccessGeolocation(position) { //좌표 성공시
     var location = new naver.maps.LatLng(position.coords.latitude,
                                          position.coords.longitude);
+    //오브젝트 생성, jqurey 오브젝트기반 position.~.~ 위치추적역할
 
     map.setCenter(location); // 얻은 좌표를 지도의 중심으로 설정합니다.
-    map.setZoom(12); // 지도의 줌 레벨을 변경합니다.
+    map.setZoom(11); // 지도의 줌 레벨을 변경합니다.
 
     infowindow.setContent('<div style="padding:20px;">' +
         'latitude: '+ location.lat() +'<br />' +
-        'longitude: '+ location.lng() +'</div>');
+        'longitude: '+ location.lng() +'</div>'); //브라우저에 문자열 표시해주는 메서드
 
-    infowindow.open(map, location);
+    infowindow.open(map, location); //브라우저 정보를 정보창에 올려준다
 }
 
-function onErrorGeolocation() {
-    var center = map.getCenter();
+function onErrorGeolocation() { //권한 차단시 실행
+    var center = map.getCenter(); //변수 생성
 
     infowindow.setContent('<div style="padding:20px;">' +
         '<h5 style="margin-bottom:5px;color:#f00;">Geolocation failed!</h5>'+ "latitude: "+ center.lat() +"<br />longitude: "+ center.lng() +'</div>');
 
-    infowindow.open(map, center);
+    infowindow.open(map, center); //브라우저 정보를 정보창에 올려준다
 }
 
-$(window).on("load", function() {
-    if (navigator.geolocation) {
+$(window).on("load", function() { //브라우저가(자원,정보가) 로드되면 함수시작
+    if (navigator.geolocation) { 
+        //geolocation 사용하기위해 navigator.geolocation 객체(오브젝트) 호출
         navigator.geolocation.getCurrentPosition(onSuccessGeolocation, onErrorGeolocation);
+        //현재 위치를 가지고는 getCurrentPosition메서드 호출 후 매개변수(파라미터) 적용
     } else {
         var center = map.getCenter();
-
+        //변수 center 호출
         infowindow.setContent('<div style="padding:20px;"><h5 style="margin-bottom:5px;color:#f00;">Geolocation not supported</h5>'+ "latitude: "+ center.lat() +"<br />longitude: "+ center.lng() +'</div>');
         infowindow.open(map, center);
     }
