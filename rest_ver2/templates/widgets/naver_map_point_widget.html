@@ -1,10 +1,15 @@
 <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId={{ naver_client_id }}"></script>
 
-<style>
-#naver_map_point_{{ id }} {
-    width: {{ width }};
-    height: {{ height }};
-}
-</style>
 
 <div id="naver_map_point_{{ id }}"></div>
+
+<script>
+function){
+	var map = new naver.maps.Map(document.getElementById('naver_map_point_{{ id }}'),{
+		center: base_point
+	});
+
+
+}	
+
+</script>
