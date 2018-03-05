@@ -17,6 +17,8 @@
       </main>
 
 <script>
+var locationBtnHtml = '<a href="#" class="btn_mylct"><span class="spr_trff spr_ico_mylct">내 위치</span></a>';
+//아이콘
 var map = new naver.maps.Map('map', { 
   //map 오브젝트 생성, naver.maps.Map기반으로
     center: new naver.maps.LatLng(37.5666805, 126.9784147), //기본 좌표(서울시청)
@@ -24,13 +26,44 @@ var map = new naver.maps.Map('map', {
     mapTypeId: naver.maps.MapTypeId.NORMAL //기본 네이버 맵 타입
 });
 
+
+
+
 var infowindow = new naver.maps.InfoWindow(); 
     //infowindow오브젝트 생성 InfoWindow메서드는 지도위에 올라가는 정보창
+
+var marker = new naver.maps.Marker({
+    //마커 표시
+    position: new naver.maps.LatLng(37.5365463, 126.96385310000001), //사무실 위치
+    map: map
+});
+
+naver.maps.Event.addListener(map, 'click', function(e) {
+    //클릭시 마커 이동
+    marker.setPosition(e.coord);
+});
+
+
 
 function onSuccessGeolocation(position) { //좌표 성공시
     var location = new naver.maps.LatLng(position.coords.latitude,
                                          position.coords.longitude);
     //오브젝트 생성, jqurey 오브젝트기반 position.~.~ 위치추적역할
+
+    var customControl = new naver.maps.CustomControl(locationBtnHtml, { 
+    //오브젝트 생성, 컨트롤러 클래스
+        position: naver.maps.Position.TOP_LEFT 
+        // 아이콘 위치 왼쪽 위  
+    });
+    customControl.setMap(map);
+    //맵에 위치시킴
+
+    var domEventListener = naver.maps.Event.addDOMListener(customControl.getElement(), 'click', function () {
+        //변수 생성, 커스텀 컨트롤은 클릭시 함수시작
+        map.setCenter(new naver.maps.LatLng(position.coords.latitude,
+                                            position.coords.longitude));
+        //생성된 위치추적 적용
+    });
 
     map.setCenter(location); // 얻은 좌표를 지도의 중심으로 설정합니다.
     map.setZoom(11); // 지도의 줌 레벨을 변경합니다.
@@ -50,6 +83,13 @@ function onErrorGeolocation() { //권한 차단시 실행
 
     infowindow.open(map, center); //브라우저 정보를 정보창에 올려준다
 }
+
+
+
+    
+
+
+
 
 $(window).on("load", function() { //브라우저가(자원,정보가) 로드되면 함수시작
     if (navigator.geolocation) { 
