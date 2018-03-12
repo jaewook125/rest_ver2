@@ -1,16 +1,115 @@
 {% extends 'rest/base.html' %}
 
 {% block content %}
+    <title>간단한 지도 표시하기</title>
+    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId={{ NAVER_CLIENT_ID }}"></script>
       <main role="main" class="inner cover">
         <h1 class="cover-heading">{{rest.name}}</h1>
+
         {% if rest_image %}
           <img src="{{rest_image.image.url}}" alt="">
-          {{rest_image.image}}
         {% else %}
             <center>이미지가 없네요! 업로드 해주세요!</center>
         {% endif %}
         <div style="text-align: center;">
-            <p class="lead">{{ form }}</p>
+          <div id="map" style="width:100%;height:400px;"></div>
         </div>
       </main>
+
+<script>
+///
+
+///
+
+var locationBtnHtml = '<a href="#" class="btn_mylct"><span class="spr_trff spr_ico_mylct">내 위치</span></a>';
+//아이콘
+var map = new naver.maps.Map('map', { 
+  //map 오브젝트 생성, naver.maps.Map기반으로
+    center: new naver.maps.LatLng(37.5443204, 126.9721714), 
+    //기본 좌표(사무실 위치)
+    zoom: 12,//줌 5
+    mapTypeId: naver.maps.MapTypeId.NORMAL //기본 네이버 맵 타입
+});
+
+///
+
+///
+
+
+var infowindow = new naver.maps.InfoWindow(); 
+    //infowindow오브젝트 생성 InfoWindow메서드는 지도위에 올라가는 정보창
+
+var marker = new naver.maps.Marker({
+    //마커 표시
+    position: new naver.maps.LatLng({{rest.lnglat}}), //사무실 위치
+    map: map
+});
+
+naver.maps.Event.addListener(map, 'click', function(e) {
+    //클릭시 마커 이동
+    marker.setPosition(e.coord);
+});
+
+
+
+function onSuccessGeolocation(position) { //좌표 성공시
+    var location = new naver.maps.LatLng(position.coords.latitude,
+                                         position.coords.longitude);
+    //오브젝트 생성, jqurey 오브젝트기반 position.~.~ 위치추적역할
+
+    var customControl = new naver.maps.CustomControl(locationBtnHtml, { 
+    //오브젝트 생성, 컨트롤러 클래스
+        position: naver.maps.Position.TOP_LEFT 
+        // 아이콘 위치 왼쪽 위  
+    });
+    customControl.setMap(map);
+    //맵에 위치시킴
+
+    var domEventListener = naver.maps.Event.addDOMListener(customControl.getElement(), 'click', function () {
+        //변수 생성, 커스텀 컨트롤은 클릭시 함수시작
+        map.setCenter(new naver.maps.LatLng(position.coords.latitude,
+                                            position.coords.longitude));
+        //생성된 위치추적 적용
+    });
+
+    map.setCenter(location); // 얻은 좌표를 지도의 중심으로 설정합니다.
+    map.setZoom(11); // 지도의 줌 레벨을 변경합니다.
+
+    // infowindow.setContent('<div style="padding:20px;">' +
+    //     'latitude: '+ location.lat() +'<br />' +
+    //     'longitude: '+ location.lng() +'</div>'); //브라우저에 문자열 표시해주는 메서드
+
+    infowindow.open(map, location); 
+    //브라우저 정보를 정보창에 올려준다
+}
+
+function onErrorGeolocation() { //권한 차단시 실행
+    var center = map.getCenter(); //변수 생성
+
+    infowindow.setContent('<div style="padding:20px;">' +
+        '<h5 style="margin-bottom:5px;color:#f00;">Geolocation failed!</h5>'+ "latitude: "+ center.lat() +"<br />longitude: "+ center.lng() +'</div>');
+
+    infowindow.open(map, center); //브라우저 정보를 정보창에 올려준다
+}
+
+
+
+    
+
+
+
+
+$(window).on("load", function() { //브라우저가(자원,정보가) 로드되면 함수시작
+    if (navigator.geolocation) { 
+        //geolocation 사용하기위해 navigator.geolocation 객체(오브젝트) 호출
+        navigator.geolocation.getCurrentPosition(onSuccessGeolocation, onErrorGeolocation);
+        //현재 위치를 가지고는 getCurrentPosition메서드 호출 후 매개변수(파라미터) 적용
+    } else {
+        var center = map.getCenter();
+        //변수 center 호출
+        infowindow.setContent('<div style="padding:20px;"><h5 style="margin-bottom:5px;color:#f00;">Geolocation not supported</h5>'+ "latitude: "+ center.lat() +"<br />longitude: "+ center.lng() +'</div>');
+        infowindow.open(map, center);
+    }
+});
+</script>
 {% endblock %}

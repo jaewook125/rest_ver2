@@ -11,10 +11,9 @@ def index(request):
 		})
 
 def index_image(request, pk):
-	qs = Rest.objects.order_by('?').first()
-	rest_image = get_object_or_404(RestImage, pk=pk)
+	qs = Rest.objects.all()
 
 	return render(request, 'rest/index_image.html',{
 										"rest":qs,
-										"rest_image":rest_image,
+										'NAVER_CLIENT_ID': settings.NAVER_CLIENT_ID,
 		})
