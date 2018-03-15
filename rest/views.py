@@ -3,7 +3,7 @@ from rest.models import Rest, RestImage
 from django.conf import settings
 
 def index(request):
-	qs = Rest.objects.order_by('?').first()
+	qs = Rest.objects.all()
 
 	return render(request, 'rest/index.html', {
 										"rest":qs,
